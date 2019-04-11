@@ -7,22 +7,15 @@ var connection = mysql.createConnection({
     password: '3123',
     database: 'hw7'
 });
+var app = express();
 app.use(bodyParser.json()); // for parsing application/json
 
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
+const port = 80;
 connection.connect();
 
-connection.query('select * from assists', function (err, rows, fields) {
-    if (err) throw err
-
-    rows.array.forEach(element => {
-        console.log(element);
-    });
-});
-const getQuery = 'SELECT club, pos, max_assists, player, avg_assists 
-FROM assists
-WHERE a =?, pos =? ';
+const getQuery = 'SELECT club, pos, A, player FROM assists WHERE A=? AND POS =?;';
 app.get('/hw7', function (req, res) {
     console.log('GET on hw7 with query = ' + req.query);
     console.log('club = ' + req.query.club);
@@ -30,8 +23,12 @@ app.get('/hw7', function (req, res) {
     connection.query(getQuery, [req.query.club, req.query.pos], function (err, results, fields) {
         console.log('err = ' + err);
         console.log('results = ' + results);
-
         console.log('fields = ' + fields);
+	
+	res.json({
+	    results: results,
+	    fields: fields
+	});
     });
 });
 
