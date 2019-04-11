@@ -24,11 +24,32 @@ app.get('/hw7', function (req, res) {
         console.log('err = ' + err);
         console.log('results = ' + results);
         console.log('fields = ' + fields);
-	
-	res.json({
-	    results: results,
-	    fields: fields
-	});
+
+
+        const topPlayer = results[0];
+        const avg = 0;
+
+        results.forEach(element => {
+            if (element.A > topPlayer.A) {
+                topPlayer = element;
+            } else if (element.A == topPlayer.A) {
+                topPlayer = element.GS > topPlayer.GS ? element : topPlayer;
+            }
+
+            avg += element.A;
+        });
+
+        avg /= results.length;
+
+        const jsonResult = {
+            club: topPlayer.club,
+            max_assists: topPlayer.A,
+            player: topPlayer.Player,
+            avg_assists: avg
+        };
+
+
+        res.json(jsonResult);
     });
 });
 
